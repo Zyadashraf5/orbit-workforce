@@ -21,7 +21,7 @@ jobs:
       - run: flutter test
       - run: flutter build web --target lib/main_demo.dart --release --no-web-resources-cdn
   android:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
@@ -29,15 +29,13 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
-          cache-dependency-path: |
-            android/**/*.gradle
-            android/gradle/wrapper/gradle-wrapper.properties
-            pubspec.lock
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.47.9'
           channel: stable
-          cache: true
+          cache: false
       - run: flutter pub get
       - run: flutter build apk --debug --target lib/main_demo.dart
+      - name: Remove generated intermediates from the disposable runner
+        if: always()
+        run: rm -rf -- build
